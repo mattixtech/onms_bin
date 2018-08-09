@@ -23,13 +23,15 @@ deployModule()
     if [[ -n "$1" ]]; then
         echo -e "Restart flag was set, stopping the server..."
         nstop
+    else
+        echo -e "Note: You may need to manually restart the server"
     fi
 
     for jar in $jarsToDeploy; do
         local jarBaseName=$(basename $jar)
         local checkSum=$(md5sum $jar | awk '{print $1}')
         local targetCheckSum
-        targetCheckSum=$(md5sum "$OPENNMS_LIB_DIR/$jarBaseName" | awk '{print $1}')
+        targetCheckSum=$(md5sum "$OPENNMS_LIB/$jarBaseName" | awk '{print $1}')
 
         if [[ $? -ne 0 ]]; then
             echo -e "ERROR: Could not check target file $jarBaseName" >2
@@ -40,7 +42,7 @@ deployModule()
             echo -e "$jarBaseName is already up to date"
         else
             echo -e "Deploying $jarBaseName..."
-            cp "$jar" "$OPENNMS_LIB_DIR"
+            cp "$jar" "$OPENNMS_LIB"
 
             if [[ $? -ne 0 ]]; then
                 echo -e "ERROR: Could not copy $jarBaseName" >2

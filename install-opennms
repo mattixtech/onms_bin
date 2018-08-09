@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Removes an existing OpenNMS install, builds a new one and installs it.
-set -x
+
 if [[ -z "$OPENNMS_SETUP_DEFINED" ]]; then
     ( >&2 echo -e "ERROR: setup.sh was not sourced" )
     exit 1
@@ -13,7 +13,7 @@ if ! [[ $REPLY =~ ^[Yy]$ ]]; then
     exit 0
 fi
 
-RELEASE=$(python -c "import xml.etree.ElementTree as ET; print(ET.parse(open('"$OPENNMS_SOURCE_ROOT"' + \
+RELEASE=$(python -c "import xml.etree.ElementTree as ET; print(ET.parse(open('"$OPENNMS_SOURCE"' + \
     '/pom.xml')).getroot().find('{http://maven.apache.org/POM/4.0.0}version').text)")
 
 if [[ -z "$RELEASE" ]]; then
@@ -28,20 +28,24 @@ else
     echo -e "No install found, nothing to stop"
 fi
 
-rm -rf "$OPENNMS_SOURCE_ROOT"/target
-rm -rf "$OPENNMS_SOURCE_ROOT"/features/minion/container/karaf/target
+echo -e "***Removing old install...***"
+rm -rf "$OPENNMS_SOURCE"/target
+rm -rf "$OPENNMS_SOURCE"/features/minion/container/karaf/target
 
 CWD=$(pwd)
-cd "$OPENNMS_SOURCE_ROOT"
+cd "$OPENNMS_SOURCE"
+echo -e "***Building...***"
 clean_cmd && compile_cmd && assemble_cmd || ( >&2 echo -e "ERROR: Could not build" ); exit 1
 cd "$CWD"
-mkdir "$OPENNMS_SOURCE_ROOT"/target/opennms-"$RELEASE"
+mkdir "$OPENNMS_SOURCE"/target/opennms-"$RELEASE" || exit 1
 
-ln -s "$OPENNMS_SOURCE_ROOT"/target/opennms-"$RELEASE" "$OPENNMS_SOURCE_ROOT"/target/opennms
-tar zxvf "$OPENNMS_SOURCE_ROOT"/target/opennms-"$RELEASE".tar.gz -C "$OPENNMS_HOME"
+echo -e "***Installing...***"
+ln -s "$OPENNMS_SOURCE"/target/opennms-"$RELEASE" "$OPENNMS_SOURCE"/target/opennms || exit 1
+tar zxvf "$OPENNMS_SOURCE"/target/opennms-"$RELEASE".tar.gz -C "$OPENNMS_HOME" || exit 1
 
+echo -e "***Configuring...***"
 # TODO: Copy overlay?
-
 sudo "$OPENNMS_BIN"/runjava -s
+#sudo -u $(whoami) dropdb "opennms"
 sudo "$OPENNMS_BIN"/install -dis
 #sudo "$OPENNMS_BIN"/opennms -t start
