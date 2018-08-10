@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Runs the necessary configuration scripts
+
+echo -e "***Configuring...***"
+sudo "$OPENNMS_BIN"/runjava -s
+#sudo -u $(whoami) dropdb "opennms"
+sudo "$OPENNMS_BIN"/install -dis
+#sudo "$OPENNMS_BIN"/opennms -t start

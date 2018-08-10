@@ -32,20 +32,18 @@ echo -e "***Removing old install...***"
 rm -rf "$OPENNMS_SOURCE"/target
 rm -rf "$OPENNMS_SOURCE"/features/minion/container/karaf/target
 
-CWD=$(pwd)
-cd "$OPENNMS_SOURCE"
 echo -e "***Building...***"
-clean_cmd && compile_cmd && assemble_cmd || ( >&2 echo -e "ERROR: Could not build" ); exit 1
-cd "$CWD"
-mkdir "$OPENNMS_SOURCE"/target/opennms-"$RELEASE" || exit 1
+( cd "$OPENNMS_SOURCE" && clean_cmd && compile_cmd && assemble_cmd )
+
+if ! [[ -d "$OPENNMS_SOURCE"/target/opennms-"$RELEASE" ]]; then
+    mkdir "$OPENNMS_SOURCE"/target/opennms-"$RELEASE"
+fi
 
 echo -e "***Installing...***"
-ln -s "$OPENNMS_SOURCE"/target/opennms-"$RELEASE" "$OPENNMS_SOURCE"/target/opennms || exit 1
-tar zxvf "$OPENNMS_SOURCE"/target/opennms-"$RELEASE".tar.gz -C "$OPENNMS_HOME" || exit 1
 
-echo -e "***Configuring...***"
+if ! [[ -L "$OPENNMS_SOURCE"/target/opennms ]]; then
+    ln -s "$OPENNMS_SOURCE"/target/opennms-"$RELEASE" "$OPENNMS_SOURCE"/target/opennms
+fi
+
+tar zxvf "$OPENNMS_SOURCE"/target/opennms-"$RELEASE".tar.gz -C "$OPENNMS_HOME"
 # TODO: Copy overlay?
-sudo "$OPENNMS_BIN"/runjava -s
-#sudo -u $(whoami) dropdb "opennms"
-sudo "$OPENNMS_BIN"/install -dis
-#sudo "$OPENNMS_BIN"/opennms -t start
