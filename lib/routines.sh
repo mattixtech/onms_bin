@@ -1,3 +1,4 @@
+#@IgnoreInspection BashAddShebang
 ##############################
 # deployModule():
 #
@@ -5,14 +6,15 @@
 #
 # in:
 # $1 - Optional flag to control whether or not the server will be restarted
-# as part of the deployment
+# as part of the deployment (true if any value provided)
 #
 ##############################
 deployModule()
 {
-    local moduleDir=$(PWD)
+    local moduleDir=$(pwd)
 
-    jarsToDeploy=$(find "$moduleDir"/target -name "*.jar" ! -name "*-sources.jar")
+    jarsToDeploy=$(find "$moduleDir"/target -name "*.jar" \
+        ! -name "*-sources.jar")
 
     if [[ -z "$jarsToDeploy" ]]; then
         echo -e "ERROR: Could not find any jars to deploy" >2
@@ -28,13 +30,13 @@ deployModule()
     fi
 
     for jar in $jarsToDeploy; do
-        local jarBaseName=$(basename $jar)
-        local checkSum=$(md5sum $jar | awk '{print $1}')
+        local jarBaseName=$(basename "$jar")
+        local checkSum=$(md5sum "$jar" | awk '{print $1}')
         local targetCheckSum
         targetCheckSum=$(md5sum "$OPENNMS_LIB/$jarBaseName" | awk '{print $1}')
 
         if [[ $? -ne 0 ]]; then
-            echo -e "ERROR: Could not check target file $jarBaseName" >2
+            ( >&2 echo -e "ERROR: Could not check target file $jarBaseName" )
             continue
         fi
 
@@ -45,7 +47,7 @@ deployModule()
             cp "$jar" "$OPENNMS_LIB"
 
             if [[ $? -ne 0 ]]; then
-                echo -e "ERROR: Could not copy $jarBaseName" >2
+                ( >&2 echo -e "ERROR: Could not copy $jarBaseName" )
             else
                 echo -e "Done!"
             fi

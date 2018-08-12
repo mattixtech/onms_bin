@@ -1,3 +1,4 @@
+#@IgnoreInspection BashAddShebang
 # Convenient alias commands for interactive shells
 alias assemble="$OPENNMS_SOURCE/assemble.pl -DskipTests=true"
 alias builddeploy="clean && compile && deployModule"

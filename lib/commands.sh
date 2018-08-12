@@ -1,3 +1,4 @@
+#@IgnoreInspection BashAddShebang
 # Command shortcuts for noninteractive shells
 
 assemble_cmd()

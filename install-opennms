@@ -33,6 +33,7 @@ rm -rf "$OPENNMS_SOURCE"/target
 rm -rf "$OPENNMS_SOURCE"/features/minion/container/karaf/target
 
 echo -e "***Building...***"
+# Run in subshell since we are changing directories
 ( cd "$OPENNMS_SOURCE" && clean_cmd && compile_cmd && assemble_cmd )
 
 if ! [[ -d "$OPENNMS_SOURCE"/target/opennms-"$RELEASE" ]]; then
@@ -42,7 +43,7 @@ fi
 echo -e "***Installing...***"
 
 if ! [[ -L "$OPENNMS_SOURCE"/target/opennms ]]; then
-    ln -s "$OPENNMS_SOURCE"/target/opennms-"$RELEASE" "$OPENNMS_SOURCE"/target/opennms
+    ln -s "$OPENNMS_SOURCE"/target/opennms-"$RELEASE" "$OPENNMS_HOME"
 fi
 
 tar zxvf "$OPENNMS_SOURCE"/target/opennms-"$RELEASE".tar.gz -C "$OPENNMS_HOME"

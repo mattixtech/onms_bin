@@ -1,3 +1,4 @@
+#@IgnoreInspection BashAddShebang
 # Set up some useful directory variables
 export OPENNMS_HOME="$OPENNMS_DIR/target/opennms"
 export OPENNMS_BIN="$OPENNMS_HOME/bin"
