@@ -11,6 +11,7 @@
 ##############################
 deployModule()
 {
+    set -o pipefail
     local moduleDir=$(pwd)
 
     jarsToDeploy=$(find "$moduleDir"/target -name "*.jar" \
