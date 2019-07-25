@@ -29,12 +29,21 @@ else
 fi
 
 echo -e "***Removing old install...***"
-sudo rm -rf "$OPENNMS_SOURCE"/target
-sudo rm -rf "$OPENNMS_SOURCE"/features/minion/container/karaf/target
+mkdir -p /tmp/target.backup.$$
+cp "$OPENNMS_SOURCE"/target/*.tar.gz /tmp/target.backup.$$
+sudo rm -rf "$OPENNMS_SOURCE"/target/*
+sudo rm -rf "$OPENNMS_SOURCE"/features/minion/container/karaf/target/*
+cp /tmp/target.backup.$$/*.tar.gz "$OPENNMS_SOURCE"/target/
+rm -rf /tmp/target.backup.$$
 
-echo -e "***Building...***"
-# Run in subshell since we are changing directories
-( cd "$OPENNMS_SOURCE" && clean_cmd && compile_cmd && assemble_cmd )
+read -p "Would you like to rebuild. (y/n): " -n 1 -r
+echo # new line
+
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo -e "***Building...***"
+    # Run in subshell since we are changing directories
+    ( cd "$OPENNMS_SOURCE" && clean_cmd && compile_cmd && assemble_cmd )
+fi
 
 if ! [[ -d "$OPENNMS_SOURCE"/target/opennms-"$RELEASE" ]]; then
     mkdir "$OPENNMS_SOURCE"/target/opennms-"$RELEASE"

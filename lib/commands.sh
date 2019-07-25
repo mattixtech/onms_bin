@@ -21,6 +21,6 @@ export -f compile_cmd
 
 nstop_cmd()
 {
-    sudo "$OPENNMS_BIN"/opennms stop
+    sudo kill -9 $(pgrep -f opennms_bootstrap.jar)
 }
 export -f nstop_cmd
