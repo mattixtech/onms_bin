@@ -1,5 +1,18 @@
 #!/usr/bin/env bash
 
-docker kill $(docker ps -q)
-docker rm $(docker ps -a -q)
-docker volume rm $(docker volume ls -qf dangling=true)
+containers="$(docker ps -q)"
+if [ -n "$containers" ]; then
+    docker kill $containers
+fi
+
+containers="$(docker ps -a -q)"
+if [ -n "$containers" ]; then
+    docker rm $containers
+fi
+
+dockerVolumes="$(docker volume ls -qf dangling=true)"
+if [ -n "$dockerVolumes" ]; then
+    docker volume rm $dockerVolumes
+fi
+
+yes | docker network prune  > /dev/null 2>&1

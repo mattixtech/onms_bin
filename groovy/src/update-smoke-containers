@@ -1,0 +1,64 @@
+#!/bin/bash
+//usr/bin/env groovy -cp "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" "$0" $@; exit $?
+import groovy.cli.commons.CliBuilder
+import groovy.cli.commons.OptionAccessor
+import static ShellCommands.runCommand
+
+def getOptions(String[] args) {
+    def cli = new CliBuilder(usage: "update-smoke-containers -d <dir>", header: "Options:")
+    cli.d(type: String, "Directory to download images to")
+    cli.m(type: String, "Minion CircleCI build Id")
+    cli.s(type: String, "Sentinel CircleCI build Id")
+    cli.h(type: String, "Horizon CircleCI build Id")
+
+    def options = cli.parse(args)
+
+    if (!options.d || (!options.m && !options.s && !options.h)) {
+        cli.usage()
+        System.exit(1)
+    }
+
+    return options
+}
+
+def getImages(OptionAccessor options) {
+    // Key is image name, value is CircleCI build Id
+    def images = new HashMap()
+
+    if (options.h)
+        images.put("horizon.oci", options.h)
+
+    if (options.s)
+        images.put("sentinel.oci", options.s)
+
+    if (options.m)
+        images.put("minion.oci", options.m)
+
+    return images
+}
+
+def downloadImages(Map images, String directory, String circleId) {
+    // Download new images
+    println("Downloading new images...")
+    images.entrySet().each { img ->
+        println("Downloading ${img.getKey()}...")
+        runCommand("wget https://${img.getValue()}-${circleId}.circle-artifacts.com/0/${img.getKey()} -P ${directory}", ShellCommands.printStderrAndExit)
+    }
+}
+
+def importImages(Map images, String directory) {
+    // Import them into docker
+    println("Importing into docker...")
+    images.entrySet().each { img ->
+        println("Importing ${img.getKey()}...")
+        runCommand("docker image load -i ${directory}/${img.getKey()}", ShellCommands.printStderrAndExit)
+    }
+}
+
+// Seems like this is a fixed part of all the artifact download URLs
+def circleId = "9377198-gh"
+
+def options = getOptions(args), images = getImages(options)
+runCommand("mkdir -p ${options.d}", ShellCommands.printStderrAndExit)
+downloadImages(images, options.d.toString(), circleId)
+importImages(images, options.d.toString())

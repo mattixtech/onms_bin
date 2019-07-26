@@ -9,6 +9,7 @@ BASE_DIR="/Users/opennms/shared/onms_bin"
 # ***CHANGEME*** ***CHANGEME***
 
 BIN_DIR="$BASE_DIR/bin"
+GROOVY_DIR="$BASE_DIR/groovy/src"
 LIB_DIR="$BASE_DIR/lib"
 export OPENNMS_SETUP_DEFINED="true"
 source "$LIB_DIR"/dirs.sh

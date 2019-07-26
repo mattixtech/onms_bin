@@ -7,4 +7,5 @@ export OPENNMS_SOURCE="$OPENNMS_DIR"
 
 # Add the bin directory to the PATH
 PATH="${BIN_DIR}:${PATH}"
+PATH="${GROOVY_DIR}:${PATH}"
 export PATH

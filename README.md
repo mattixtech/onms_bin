@@ -1,6 +1,10 @@
 # onms_bin
 Useful scripts for work.
 
+## Requirements
+* Bash
+* Groovy
+
 ## Usage
 * Update the CHANGEME fields in setup.sh
 * Source setup.sh (ex. in ~/.bash_profile or manually `source setup.sh`)
