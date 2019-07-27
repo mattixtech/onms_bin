@@ -2,7 +2,7 @@
 //usr/bin/env groovy -cp "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" "$0" $@; exit $?
 import groovy.cli.commons.CliBuilder
 import groovy.cli.commons.OptionAccessor
-import static ShellCommands.runCommand
+import static ca.mattbrooks.tools.groovy.shell.ShellCommands.*
 
 static def getOptions(String[] args) {
     def cli = new CliBuilder(usage: "update-smoke-containers", header: "Options:")
@@ -41,18 +41,18 @@ static def getImages(OptionAccessor options) {
 static def downloadImages(Map imageMap, String directory, String circleId) {
     // Download new images
     println("Downloading new images...")
-    imageMap.entrySet().each { img ->
-        println("Downloading ${img.getKey()}...")
-        runCommand("wget https://${img.getValue()}-${circleId}.circle-artifacts.com/0/${img.getKey()} -O ${directory}/${img.getKey()}", ShellCommands.printStderrAndExit)
+    imageMap.entrySet().each {
+        println("Downloading ${it.getKey()}...")
+        runCommand("wget https://${it.getValue()}-${circleId}.circle-artifacts.com/0/${it.getKey()} -O ${directory}/${it.getKey()}", printStderrAndExit)
     }
 }
 
 static def importImages(Map imageMap, String directory) {
     // Import them into docker
     println("Importing into docker...")
-    imageMap.entrySet().each { img ->
-        println("Importing ${img.getKey()}...")
-        runCommand("docker image load -i ${directory}/${img.getKey()}", ShellCommands.printStderrAndExit)
+    imageMap.entrySet().each {
+        println("Importing ${it.getKey()}...")
+        runCommand("docker image load -i ${directory}/${it.getKey()}", printStderrAndExit)
     }
 }
 
@@ -60,7 +60,7 @@ static def importImages(Map imageMap, String directory) {
 def circleId = "9377198-gh"
 
 def options = getOptions(args), images = getImages(options)
-runCommand("mkdir -p ${options.d}", ShellCommands.printStderrAndExit)
+runCommand("mkdir -p ${options.d}", printStderrAndExit)
 downloadImages(images, options.d.toString(), circleId)
 
 if (!options.n)

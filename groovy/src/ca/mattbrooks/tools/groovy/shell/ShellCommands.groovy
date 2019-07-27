@@ -1,3 +1,5 @@
+package ca.mattbrooks.tools.groovy.shell
+
 import java.util.function.Consumer
 
 class ShellCommands {
