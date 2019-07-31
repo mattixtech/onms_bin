@@ -1,5 +1,5 @@
-#!/bin/bash
-//usr/bin/env groovy -cp "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" "$0" $@; exit $?
+#!/usr/bin/env bash
+//usr/bin/env groovyclient 2>/dev/null -cp "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" "$0" $@; exit $? || /usr/bin/env groovy -cp "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" "$0" $@; exit $?
 import groovy.cli.commons.CliBuilder
 import groovy.cli.commons.OptionAccessor
 import static ca.mattbrooks.tools.groovy.shell.ShellCommands.*
@@ -62,7 +62,7 @@ def circleId = "9377198-gh"
 def options = getOptions args
 def images = getImages options
 runCommand("mkdir -p ${options.d}", printStderrAndExit)
-downloadImages(images, options.d.toString(), circleId)
+downloadImages(images, options.d, circleId)
 
 if (!options.n)
-    importImages(images, options.d.toString())
+    importImages(images, options.d)
