@@ -12,11 +12,11 @@ static def getOptions(String[] args) {
     cli.h(type: String, "Horizon CircleCI build Id")
     cli.n(type: Boolean, "Download but don't load into docker")
 
-    def options = cli.parse(args)
+    def options = cli.parse args
 
     if (!options.d || (!options.m && !options.s && !options.h)) {
         cli.usage()
-        System.exit(1)
+        System.exit 1
     }
 
     return options
@@ -42,14 +42,14 @@ static def downloadImages(Map imageMap, String directory, String circleId) {
     // Download new images
     println("Downloading new images...")
     imageMap.entrySet().each {
-        println("Downloading ${it.getKey()}...")
+        println "Downloading ${it.getKey()}..."
         runCommand("wget https://${it.getValue()}-${circleId}.circle-artifacts.com/0/${it.getKey()} -O ${directory}/${it.getKey()}", printStderrAndExit)
     }
 }
 
 static def importImages(Map imageMap, String directory) {
     // Import them into docker
-    println("Importing into docker...")
+    println "Importing into docker..."
     imageMap.entrySet().each {
         println("Importing ${it.getKey()}...")
         runCommand("docker image load -i ${directory}/${it.getKey()}", printStderrAndExit)
@@ -59,7 +59,8 @@ static def importImages(Map imageMap, String directory) {
 // Seems like this is a fixed part of all the artifact download URLs
 def circleId = "9377198-gh"
 
-def options = getOptions(args), images = getImages(options)
+def options = getOptions args
+def images = getImages options
 runCommand("mkdir -p ${options.d}", printStderrAndExit)
 downloadImages(images, options.d.toString(), circleId)
 

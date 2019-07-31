@@ -5,8 +5,8 @@ import java.util.function.Consumer
 class ShellCommands {
     static def printStderrAndExit = { ShellOutput exec ->
         if (exec.exitValue) {
-            println(exec.stdErr)
-            System.exit(1)
+            println exec.stdErr
+            System.exit 1
         }
     }
 
@@ -17,8 +17,8 @@ class ShellCommands {
         executedProc.waitFor()
 
         if (execConsumer != null) {
-            execConsumer.accept(new ShellOutput(stdOut: sout.toString(), stdErr: serr.toString(),
-                    exitValue: executedProc.exitValue()))
+            execConsumer.accept new ShellOutput(stdOut: sout.toString(), stdErr: serr.toString(),
+                    exitValue: executedProc.exitValue())
         }
     }
 
