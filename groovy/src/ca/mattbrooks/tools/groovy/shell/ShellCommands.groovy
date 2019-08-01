@@ -10,14 +10,16 @@ class ShellCommands {
         }
     }
 
-    static def runCommand(String command, Consumer<ShellOutput> execConsumer = null) {
+    static void runCommand(String command, Consumer<ShellOutput> execConsumer = null) {
         def executedProc = command.execute()
-        def sout = new StringBuilder(), serr = new StringBuilder()
-        executedProc.consumeProcessOutput(sout, serr)
+        def stdOut = new StringBuilder()
+        def stdErr = new StringBuilder()
+
+        executedProc.consumeProcessOutput stdOut, stdErr
         executedProc.waitFor()
 
-        if (execConsumer != null) {
-            execConsumer.accept new ShellOutput(stdOut: sout.toString(), stdErr: serr.toString(),
+        if (execConsumer) {
+            execConsumer.accept new ShellOutput(stdOut: "$stdOut", stdErr: "$stdErr",
                     exitValue: executedProc.exitValue())
         }
     }

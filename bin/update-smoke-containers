@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+exec $(get_groovy) "$GROOVY_DIR"/ca/mattbrooks/scripts/update-smoke-containers.groovy

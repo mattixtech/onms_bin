@@ -24,3 +24,9 @@ nstop_cmd()
     sudo kill -9 $(pgrep -f opennms_bootstrap.jar)
 }
 export -f nstop_cmd
+
+get_groovy()
+{
+  command -v groovyclient || command -v groovy
+}
+export -f get_groovy
