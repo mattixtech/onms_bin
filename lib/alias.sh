@@ -3,7 +3,8 @@
 alias assemble="$OPENNMS_SOURCE/assemble.pl -DskipTests=true"
 alias builddeploy="clean && compile && deployModule"
 alias clean="$OPENNMS_SOURCE/clean.pl -DskipTests=true"
-alias compile="$OPENNMS_SOURCE/compile.pl -DskipTests=true -DvaadinJavaMaxMemory=1g -DmaxCpus=8 install --builder smart --threads 8"
+alias compileParallel="$OPENNMS_SOURCE/compile.pl -DskipTests=true -DvaadinJavaMaxMemory=1g -DmaxCpus=7 install --builder smart --threads 7"
+alias compile="$OPENNMS_SOURCE/compile.pl -DskipTests=true"
 alias l="ls -lahtr"
 alias nstart="sudo $OPENNMS_HOME/bin/opennms -vt start"
 alias nstop='sudo kill -9 $(pgrep -f opennms_bootstrap.jar)'

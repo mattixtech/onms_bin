@@ -8,7 +8,6 @@ import static ca.mattbrooks.tools.groovy.shell.ShellCommands.runCommand
 
 static OptionAccessor getOptions(String[] args) {
     def cli = new CliBuilder(usage: "update-smoke-containers [options] <dir>", header: "Options:")
-    cli.d(type: String, "Directory to download images to (overwrites existing)")
     cli.m(type: String, "Minion CircleCI build Id")
     cli.s(type: String, "Sentinel CircleCI build Id")
     cli.h(type: String, "Horizon CircleCI build Id")
@@ -45,7 +44,7 @@ static void downloadImages(Map imageMap, String directory, String circleId) {
     println "Downloading new images..."
     imageMap.each {
         println "Downloading ${it.key}..."
-        runCommand "wget https://${it.value}-${circleId}.circle-artifacts.com/0/${it.key} -O ${directory}/${it.value}", printStderrAndExit
+        runCommand "wget https://${it.value}-${circleId}.circle-artifacts.com/0/${it.key} -O ${directory}/${it.key}", printStderrAndExit
     }
 }
 
